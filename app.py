@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database import db, User, ChatHistory, Appointment
 from datetime import datetime
 import requests
+from twilio.rest import Client
+from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "carebotai-secret-key-2026")
