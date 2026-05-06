@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,7 +18,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-import os
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")  # Put your Groq API key here
 
 @login_manager.user_loader
