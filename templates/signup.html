@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — CareBot AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="auth-page">
+        <div class="auth-left">
+            <div class="auth-left-content">
+                <div class="auth-brand">
+                    <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+                    <span>CareBot<span class="highlight">AI</span></span>
+                </div>
+                <h2>Join CareBot AI Today</h2>
+                <p>Create your free account and get access to all features of your smart healthcare assistant.</p>
+                <div class="auth-features">
+                    <div class="auth-feature"><i class="fas fa-check-circle"></i> 100% Free forever</div>
+                    <div class="auth-feature"><i class="fas fa-check-circle"></i> AI powered responses</div>
+                    <div class="auth-feature"><i class="fas fa-check-circle"></i> Book appointments</div>
+                    <div class="auth-feature"><i class="fas fa-check-circle"></i> Find nearby hospitals</div>
+                </div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <div class="auth-form-card">
+                <div class="auth-form-header">
+                    <h2>Create Account 🚀</h2>
+                    <p>Join thousands of users on CareBot AI</p>
+                </div>
+
+                {% if error %}
+                <div class="auth-error">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/signup">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" name="name" placeholder="Enter your full name" required />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" name="email" placeholder="Enter your email" required />
+                    </div>
+                    <div class="form-group">
+    <label><i class="fas fa-lock"></i> Password</label>
+    <div class="password-wrap">
+    <input type="password" name="password" id="password" placeholder="Create a strong password" required />
+    <i class="fas fa-eye toggle-eye" onclick="togglePassword('password', this)"></i>
+</div>
+</div>
+<div class="form-group">
+    <label><i class="fas fa-lock"></i> Confirm Password</label>
+    <input type="password" id="confirm_password" placeholder="Confirm your password" required />
+</div>
+<div id="password-error" style="color: #e63946; font-size: 13px; margin-bottom: 10px; display: none;">
+    <i class="fas fa-exclamation-circle"></i> Passwords do not match!
+</div>
+<button type="submit" class="auth-submit-btn" onclick="return checkPasswords()">
+                        Create Account <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
+                <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    function checkPasswords() {
+        const pass = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+        const error = document.getElementById('password-error');
+        if (pass !== confirm) {
+            error.style.display = 'block';
+            return false;
+        }
+        error.style.display = 'none';
+        return true;
+    }
+
+    function togglePassword(id, icon) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
+</body>
+</html>
+</body>
+</html>

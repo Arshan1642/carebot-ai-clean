@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareBot AI — Smart Healthcare Assistant</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <div class="nav-logo">
+        <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+        <span>CareBot<span class="highlight">AI</span></span>
+    </div>
+    <div class="nav-links">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#symptom-checker" class="nav-link">Symptom Check</a>
+        <a href="/hospitals" class="nav-link">Hospitals</a>
+        <a href="#doctors" class="nav-link">Doctors</a>
+        <a href="/appointments" class="nav-link">Book Appointment</a>
+        <a href="/carebot" class="nav-link">Chat</a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+        {% if current_user.is_authenticated %}
+        <a href="/logout" class="btn-signup">Logout <i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+        <a href="/login" class="btn-login">Login</a>
+        <a href="/signup" class="btn-signup">Sign Up <i class="fas fa-arrow-right"></i></a>
+        {% endif %}
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+    <a href="#home" onclick="toggleMenu()"><i class="fas fa-home"></i> Home</a>
+    <a href="#features" onclick="toggleMenu()"><i class="fas fa-star"></i> Features</a>
+    <a href="#symptom-checker" onclick="toggleMenu()"><i class="fas fa-stethoscope"></i> Symptom Check</a>
+    <a href="#hospitals" onclick="toggleMenu()"><i class="fas fa-hospital"></i> Hospitals</a>
+    <a href="#doctors" onclick="toggleMenu()"><i class="fas fa-user-md"></i> Doctors</a>
+    <a href="/appointments" onclick="toggleMenu()"><i class="fas fa-calendar-check"></i> Book Appointment</a>
+    <a href="/carebot" onclick="toggleMenu()"><i class="fas fa-comments"></i> Chat</a>
+    <div class="mobile-auth">
+        {% if current_user.is_authenticated %}
+        <a href="/dashboard" class="btn-login" onclick="toggleMenu()">Dashboard</a>
+        <a href="/logout" class="btn-signup" onclick="toggleMenu()">Logout</a>
+        {% else %}
+        <a href="/login" class="btn-login" onclick="toggleMenu()">Login</a>
+        <a href="/signup" class="btn-signup" onclick="toggleMenu()">Sign Up</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero" id="home">
+    <div class="hero-bg">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+    <div class="hero-content reveal">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            AI-Powered Healthcare Assistant
+        </div>
+        <h1>Your Health,<br /><span class="highlight-text">Smarter</span> Care</h1>
+        <p>CareBot AI combines artificial intelligence with real healthcare data to give you instant symptom analysis, nearby hospital finder, doctor directory, and 24/7 support — all in one place.</p>
+        <div class="hero-buttons">
+            <a href="/carebot" class="btn-primary">
+                <i class="fas fa-comments"></i> Start Chatting
+            </a>
+            <a href="#symptom-checker" class="btn-outline">
+                <i class="fas fa-stethoscope"></i> Check Symptoms
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Available</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">5+</span>
+                <span class="stat-label">AI Features</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Free</span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-visual reveal-right">
+        <div class="phone-mockup">
+            <div class="phone-screen">
+                <div class="phone-header">
+                    <div class="phone-avatar"><i class="fas fa-robot"></i></div>
+                    <div>
+                        <div class="phone-name">CareBot AI</div>
+                        <div class="phone-status"><span class="pulse-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="phone-messages">
+                    <div class="phone-msg bot">👋 Hi! How can I help you today?</div>
+                    <div class="phone-msg user">I have a headache and fever</div>
+                    <div class="phone-msg bot">I'll check your symptoms. Based on what you described, it could be a viral infection. Let me find nearby hospitals for you...</div>
+                    <div class="phone-msg bot typing"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="floating-pill pill1"><i class="fas fa-hospital"></i> 3 Hospitals Nearby</div>
+        <div class="floating-pill pill2"><i class="fas fa-user-md"></i> Dr. Available Now</div>
+        <div class="floating-pill pill3"><i class="fas fa-shield-alt"></i> AI Verified</div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features" id="features">
+    <div class="section-header reveal">
+        <div class="section-tag">What We Offer</div>
+        <h2>Everything You Need<br />for <span class="highlight">Smart Healthcare</span></h2>
+        <p>A complete healthcare companion powered by AI</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card reveal" style="--delay: 0s">
+            <div class="feature-icon-wrap" style="--icon-color: #00b4d8">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3>AI Chat Support</h3>
+            <p>Get instant answers to any health question with our advanced AI chatbot available 24/7.</p>
+            <a href="/carebot" class="feature-link">Try Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="feature-card reveal" style="--delay: 0.1s">
+            <div class="feature-icon-wrap" style="--icon-color: #06d6a0">
+                <i class="fas fa-stethoscope"></i>
+            </div>
+            <h3>Symptom Checker</h3>
+            <p>Select your symptoms and get AI-powered analysis with severity levels and recommendations.</p>
+            <a href="#symptom-checker" class="feature-link">Check Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="feature-card reveal" style="--delay: 0.2s">
+            <div class="feature-icon-wrap" style="--icon-color: #f77f00">
+                <i class="fas fa-hospital"></i>
+            </div>
+            <h3>Hospital Finder</h3>
+            <p>Find real nearby hospitals with distance, phone numbers, and directions instantly.</p>
+            <a href="/hospitals" class="feature-link">Find Hospitals <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="feature-card reveal" style="--delay: 0.3s">
+            <div class="feature-icon-wrap" style="--icon-color: #7209b7">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3>Doctor Directory</h3>
+            <p>Browse doctors by specialty, location, and availability. Find the right doctor for you.</p>
+            <a href="#doctors" class="feature-link">Find Doctors <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="feature-card reveal" style="--delay: 0.4s">
+            <div class="feature-icon-wrap" style="--icon-color: #e63946">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3>Book Appointment</h3>
+            <p>Schedule appointments with doctors directly from the app with instant confirmation.</p>
+            <a href="/appointments" class="feature-link">Book Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="feature-card reveal" style="--delay: 0.5s">
+            <div class="feature-icon-wrap" style="--icon-color: #fb8500">
+                <i class="fas fa-pills"></i>
+            </div>
+            <h3>Medicine Info</h3>
+            <p>Get detailed information about medicines, dosages, side effects, and alternatives.</p>
+            <a href="/carebot" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- SYMPTOM CHECKER SECTION -->
+<section class="symptom-section" id="symptom-checker">
+    <div class="section-header reveal">
+        <div class="section-tag">AI Powered</div>
+        <h2>Symptom <span class="highlight">Checker</span></h2>
+        <p>Select your symptoms and get instant AI analysis</p>
+    </div>
+    <div class="symptom-container reveal">
+        <div class="symptom-left">
+            <h3>Select Your Symptoms</h3>
+            <div class="symptom-grid" id="symptom-grid">
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-thermometer-half"></i> Fever</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-head-side-cough"></i> Cough</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-brain"></i> Headache</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-tired"></i> Fatigue</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-lungs"></i> Breathing Issues</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-stomach"></i> Nausea</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-bone"></i> Body Pain</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-eye"></i> Eye Pain</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-tint"></i> Runny Nose</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-heartbeat"></i> Chest Pain</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-dizzy"></i> Dizziness</button>
+                <button class="symptom-btn" onclick="toggleSymptom(this)"><i class="fas fa-utensils"></i> Loss of Appetite</button>
+            </div>
+            <button class="analyze-btn" onclick="analyzeSymptoms()">
+                <i class="fas fa-search"></i> Analyze Symptoms
+            </button>
+        </div>
+        <div class="symptom-right">
+            <div class="symptom-result" id="symptom-result">
+                <div class="result-placeholder">
+                    <i class="fas fa-stethoscope"></i>
+                    <p>Select symptoms and click Analyze to get AI-powered health insights</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOSPITAL FINDER SECTION -->
+<section class="hospitals-section" id="hospitals">
+    <div class="section-header reveal">
+        <div class="section-tag">Location Based</div>
+        <h2>Find Nearby <span class="highlight">Hospitals</span></h2>
+        <p>Real hospitals near your location with contact details</p>
+    </div>
+    <div class="hospital-search reveal">
+        <div class="search-bar">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" id="location-input" placeholder="Enter your city or area (e.g. Rohini, Delhi)..." />
+            <button onclick="findHospitals()"><i class="fas fa-search"></i> Find</button>
+        </div>
+    </div>
+    <div class="hospitals-grid" id="hospitals-grid">
+        <div class="hospital-placeholder">
+            <i class="fas fa-hospital"></i>
+            <p>Enter your location to find nearby hospitals</p>
+        </div>
+    </div>
+</section>
+
+<!-- DOCTOR DIRECTORY SECTION -->
+<section class="doctors-section" id="doctors">
+    <div class="section-header reveal">
+        <div class="section-tag">Expert Care</div>
+        <h2>Find the Right <span class="highlight">Doctor</span></h2>
+        <p>Browse our directory of qualified healthcare professionals</p>
+    </div>
+    <div class="doctor-filters reveal">
+        <button class="filter-btn active" onclick="filterDoctors('all', this)">All</button>
+        <button class="filter-btn" onclick="filterDoctors('general', this)">General</button>
+        <button class="filter-btn" onclick="filterDoctors('cardiologist', this)">Cardiology</button>
+        <button class="filter-btn" onclick="filterDoctors('neurologist', this)">Neurology</button>
+        <button class="filter-btn" onclick="filterDoctors('pediatrician', this)">Pediatrics</button>
+        <button class="filter-btn" onclick="filterDoctors('orthopedic', this)">Orthopedic</button>
+    </div>
+    <div class="doctors-grid" id="doctors-grid"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>CareBot<span class="highlight">AI</span></span>
+            </div>
+            <p>Your intelligent healthcare companion. Available 24/7 to assist with your health needs.</p>
+            <div class="footer-socials">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4>Features</h4>
+            <a href="/carebot">AI Chat</a>
+            <a href="#symptom-checker">Symptom Checker</a>
+            <a href="/hospitals">Hospital Finder</a>
+            <a href="#doctors">Doctor Directory</a>
+            <a href="/appointments">Book Appointment</a>
+        </div>
+        <div class="footer-links">
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-links">
+            <h4>Contact</h4>
+            <a href="#"><i class="fas fa-envelope"></i> support@carebotai.com</a>
+            <a href="#"><i class="fas fa-phone"></i> +91 98765 43210</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Delhi, India</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>⚠️ CareBot AI is for informational purposes only. Always consult a qualified doctor for medical advice.</p>
+        <p>© 2026 CareBot AI. All rights reserved. Built with ❤️ in India.</p>
+    </div>
+</footer>
+
+<script>
+// ===== FORMAT MESSAGE =====
+function formatMessage(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/### (.*?)\n/g, '<div class="msg-heading">$1</div>')
+        .replace(/## (.*?)\n/g, '<div class="msg-heading">$1</div>')
+        .replace(/\* (.*?)(\n|$)/g, '<div class="msg-bullet">• $1</div>')
+        .replace(/\d\. (.*?)(\n|$)/g, '<div class="msg-bullet">$1</div>')
+        .replace(/\n/g, '<br>');
+}
+
+// ===== THEME =====
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+const themeIcon = document.getElementById('theme-icon');
+if (themeIcon) {
+    themeIcon.classList.remove('fa-moon', 'fa-sun');
+    themeIcon.classList.add(savedTheme === 'dark' ? 'fa-sun' : 'fa-moon');
+}
+function toggleTheme() {
+    const html = document.documentElement;
+    const icon = document.getElementById('theme-icon');
+    if (html.getAttribute('data-theme') === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        html.setAttribute('data-theme', 'light');
+        icon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// ===== NAVBAR SCROLL =====
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ===== MOBILE MENU =====
+function toggleMenu() {
+    document.getElementById('mobile-menu').classList.toggle('active');
+}
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('revealed');
+    });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .reveal-right').forEach(el => observer.observe(el));
+
+// ===== SYMPTOM CHECKER =====
+function toggleSymptom(btn) {
+    btn.classList.toggle('selected');
+}
+
+async function analyzeSymptoms() {
+    const selected = [...document.querySelectorAll('.symptom-btn.selected')].map(b => b.textContent.trim());
+    if (selected.length === 0) {
+        alert('Please select at least one symptom!');
+        return;
+    }
+    const resultDiv = document.getElementById('symptom-result');
+    resultDiv.innerHTML = '<div class="analyzing"><i class="fas fa-spinner fa-spin"></i> Analyzing your symptoms...</div>';
+    const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message: `I have these symptoms: ${selected.join(', ')}. Please analyze them and tell me: 1) Possible conditions 2) Severity level (Mild/Moderate/Serious) 3) What I should do. Format your response clearly with these 3 sections.`
+        })
+    });
+    const data = await response.json();
+    resultDiv.innerHTML = `
+        <div class="result-content">
+            <div class="result-header"><i class="fas fa-clipboard-list"></i> Analysis Result</div>
+            <div class="result-text">${formatMessage(data.reply)}</div>
+            <div class="result-disclaimer">⚠️ This is AI analysis only. Please consult a doctor for proper diagnosis.</div>
+        </div>`;
+}
+
+// ===== HOSPITAL FINDER (on homepage) =====
+async function findHospitals() {
+    const location = document.getElementById('location-input').value.trim();
+    if (!location) {
+        alert('Please enter a location!');
+        return;
+    }
+    const grid = document.getElementById('hospitals-grid');
+    grid.innerHTML = '<div class="loading-hospitals"><i class="fas fa-spinner fa-spin"></i> Finding hospitals near you...</div>';
+
+    try {
+        const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location + ' India')}&format=json&limit=1`,
+            { headers: { 'Accept-Language': 'en', 'User-Agent': 'CareBot-AI/1.0' } }
+        );
+        const geoData = await geoRes.json();
+        if (!geoData || geoData.length === 0) {
+            grid.innerHTML = '<div class="hospital-placeholder"><i class="fas fa-exclamation-triangle"></i><p>Location not found! Try a more specific name.</p></div>';
+            return;
+        }
+        const lat = parseFloat(geoData[0].lat);
+        const lon = parseFloat(geoData[0].lon);
+
+        const query = `
+            [out:json][timeout:25];
+            (
+                node["amenity"="hospital"](around:5000,${lat},${lon});
+                way["amenity"="hospital"](around:5000,${lat},${lon});
+                node["amenity"="clinic"](around:5000,${lat},${lon});
+            );
+            out body; >; out skel qt;
+        `;
+        const overpassRes = await fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST', body: query
+        });
+        const overpassData = await overpassRes.json();
+        const seen = new Set();
+        const hospitals = [];
+        for (const el of overpassData.elements) {
+            const tags = el.tags || {};
+            const name = tags.name || tags['name:en'];
+            if (!name || seen.has(name)) continue;
+            seen.add(name);
+            const elLat = el.lat || (el.center && el.center.lat);
+            const elLon = el.lon || (el.center && el.center.lon);
+            if (!elLat || !elLon) continue;
+            const R = 6371;
+            const dLat = (elLat - lat) * Math.PI / 180;
+            const dLon = (elLon - lon) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat*Math.PI/180)*Math.cos(elLat*Math.PI/180)*Math.sin(dLon/2)**2;
+            const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            hospitals.push({ name, dist, lat: elLat, lon: elLon, phone: tags.phone || tags['contact:phone'] || null, amenity: tags.amenity || 'hospital' });
+        }
+        hospitals.sort((a, b) => a.dist - b.dist);
+        const top = hospitals.slice(0, 6);
+        if (top.length === 0) {
+            grid.innerHTML = '<div class="hospital-placeholder"><i class="fas fa-search"></i><p>No hospitals found nearby. Try a different area!</p></div>';
+            return;
+        }
+        grid.innerHTML = top.map(h => `
+            <div class="hospital-card">
+                <div class="hospital-icon ${h.amenity === 'clinic' ? 'pvt' : 'govt'}">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <div class="hospital-info">
+                    <h3>${h.name}</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> ${h.dist.toFixed(1)} km away</p>
+                    ${h.phone ? `<p><i class="fas fa-phone"></i> ${h.phone}</p>` : ''}
+                    <span class="hospital-type ${h.amenity === 'clinic' ? 'pvt' : 'govt'}">${h.amenity === 'clinic' ? 'Clinic' : 'Hospital'}</span>
+                </div>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lon}" target="_blank" class="directions-btn">
+                    <i class="fas fa-directions"></i> Directions
+                </a>
+            </div>`).join('');
+    } catch {
+        grid.innerHTML = '<div class="hospital-placeholder"><i class="fas fa-exclamation-triangle"></i><p>Could not fetch hospitals. Please try again!</p></div>';
+    }
+}
+
+// ===== DOCTOR DIRECTORY =====
+const doctors = [
+    { name: "Dr. Priya Sharma", specialty: "general", spec_label: "General Physician", exp: "12 years", rating: 4.8, available: true, img: "PS" },
+    { name: "Dr. Rajesh Kumar", specialty: "cardiologist", spec_label: "Cardiologist", exp: "15 years", rating: 4.9, available: true, img: "RK" },
+    { name: "Dr. Anita Singh", specialty: "neurologist", spec_label: "Neurologist", exp: "10 years", rating: 4.7, available: false, img: "AS" },
+    { name: "Dr. Mohit Verma", specialty: "pediatrician", spec_label: "Pediatrician", exp: "8 years", rating: 4.8, available: true, img: "MV" },
+    { name: "Dr. Sunita Patel", specialty: "orthopedic", spec_label: "Orthopedic", exp: "14 years", rating: 4.6, available: true, img: "SP" },
+    { name: "Dr. Vikram Joshi", specialty: "general", spec_label: "General Physician", exp: "6 years", rating: 4.5, available: true, img: "VJ" },
+];
+
+function renderDoctors(filter = 'all') {
+    const grid = document.getElementById('doctors-grid');
+    const filtered = filter === 'all' ? doctors : doctors.filter(d => d.specialty === filter);
+    grid.innerHTML = filtered.map(d => `
+        <div class="doctor-card">
+            <div class="doctor-avatar">${d.img}</div>
+            <div class="doctor-info">
+                <h3>${d.name}</h3>
+                <p class="doctor-spec">${d.spec_label}</p>
+                <p class="doctor-exp"><i class="fas fa-briefcase"></i> ${d.exp} experience</p>
+                <div class="doctor-rating"><i class="fas fa-star"></i> ${d.rating}</div>
+            </div>
+            <div class="doctor-actions">
+                <span class="availability ${d.available ? 'available' : 'busy'}">${d.available ? '● Available' : '● Busy'}</span>
+                <button class="book-doc-btn" onclick="window.location.href='/appointments'">Book</button>
+            </div>
+        </div>`).join('');
+}
+
+function filterDoctors(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDoctors(filter);
+}
+
+renderDoctors();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hospitals - CareBot AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <a href="/" class="nav-logo" style="text-decoration:none; color:var(--text);">
+        <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+        <span>CareBot<span class="highlight">AI</span></span>
+    </a>
+    <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/hospitals" class="nav-link active">Hospitals</a>
+        <a href="/appointments" class="nav-link">Appointments</a>
+        <a href="/carebot" class="nav-link">Chat</a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+        {% if current_user.is_authenticated %}
+        <a href="/logout" class="btn-signup">Logout <i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+        <a href="/login" class="btn-login">Login</a>
+        <a href="/signup" class="btn-signup">Sign Up <i class="fas fa-arrow-right"></i></a>
+        {% endif %}
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+    <a href="/" onclick="toggleMenu()"><i class="fas fa-home"></i> Home</a>
+    <a href="/hospitals" onclick="toggleMenu()"><i class="fas fa-hospital"></i> Hospitals</a>
+    <a href="/appointments" onclick="toggleMenu()"><i class="fas fa-calendar-check"></i> Appointments</a>
+    <a href="/carebot" onclick="toggleMenu()"><i class="fas fa-comments"></i> Chat</a>
+    <div class="mobile-auth">
+        {% if current_user.is_authenticated %}
+        <a href="/logout" class="btn-signup" onclick="toggleMenu()">Logout</a>
+        {% else %}
+        <a href="/login" class="btn-login" onclick="toggleMenu()">Login</a>
+        <a href="/signup" class="btn-signup" onclick="toggleMenu()">Sign Up</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hospital-page-hero">
+    <div class="hospital-page-hero-bg">
+        <div class="hospital-glow glow-one"></div>
+        <div class="hospital-glow glow-two"></div>
+    </div>
+    <div class="hospital-page-hero-content">
+        <div class="page-tag">Hospital Finder</div>
+        <h1>Find Nearby <span class="highlight">Hospitals</span> Fast</h1>
+        <p>Search real hospitals across Delhi by area, city, emergency support, and specialty.</p>
+
+        <div class="hospital-search-panel">
+            <div class="hospital-search-grid">
+                <div class="search-input-box">
+                    <label><i class="fas fa-location-dot"></i> Location</label>
+                    <input type="text" id="location-input" placeholder="Enter area e.g. Rohini Delhi..." />
+                </div>
+                <div class="search-input-box">
+                    <label><i class="fas fa-stethoscope"></i> Specialty</label>
+                    <select id="specialty-filter">
+                        <option>All Specialties</option>
+                        <option>General</option>
+                        <option>Cardiology</option>
+                        <option>Orthopedic</option>
+                        <option>Pediatrics</option>
+                        <option>Neurology</option>
+                    </select>
+                </div>
+                <div class="search-input-box">
+                    <label><i class="fas fa-filter"></i> Type</label>
+                    <select id="type-filter">
+                        <option>All Hospitals</option>
+                        <option>Government</option>
+                        <option>Private</option>
+                        <option>Clinic</option>
+                    </select>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch;">
+                    <button class="hospital-gps-btn" onclick="useGPS()">
+                        <i class="fas fa-location-crosshairs"></i> My Location
+                    </button>
+                    <button class="hospital-search-btn" onclick="searchHospitals()">
+                        <i class="fas fa-magnifying-glass"></i> Search
+                    </button>
+                </div>
+            </div>
+            <div class="hospital-quick-filters">
+                <button class="hospital-filter active" onclick="setFilter(this,'all')">All</button>
+                <button class="hospital-filter" onclick="setFilter(this,'emergency')">24/7 Emergency</button>
+                <button class="hospital-filter" onclick="setFilter(this,'nearest')">Nearest</button>
+                <button class="hospital-filter" onclick="setFilter(this,'clinic')">Clinics Only</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RESULTS -->
+<section class="hospital-results-section">
+    <div class="hospital-results-header">
+        <div>
+            <h2>Available Hospitals</h2>
+            <p id="results-subtitle">Search your location to find real hospitals nearby!</p>
+        </div>
+        <div class="hospital-results-meta">
+            <span><i class="fas fa-hospital"></i> <span id="results-count">0 Results</span></span>
+        </div>
+    </div>
+    <div class="hospital-results-grid" id="hospital-results-grid">
+        <!-- Initial empty state -->
+        <div style="grid-column:1/-1;text-align:center;padding:80px 20px;">
+            <div style="font-size:4rem;margin-bottom:16px;">🏥</div>
+            <h3 style="color:var(--text);margin-bottom:8px;">Find Real Hospitals</h3>
+            <p style="color:var(--text2);">Enter your location above or use GPS to find real hospitals near you!</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>CareBot<span class="highlight">AI</span></span>
+            </div>
+            <p>Your intelligent healthcare companion.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Quick Links</h4>
+            <a href="/">Home</a>
+            <a href="/carebot">AI Chat</a>
+            <a href="/hospitals">Hospital Finder</a>
+            <a href="/appointments">Book Appointment</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>⚠️ CareBot AI is for informational purposes only.</p>
+        <p>© 2026 CareBot AI. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+// ===== THEME =====
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+const themeIcon = document.getElementById('theme-icon');
+if (themeIcon) {
+    themeIcon.classList.remove('fa-moon', 'fa-sun');
+    themeIcon.classList.add(savedTheme === 'dark' ? 'fa-sun' : 'fa-moon');
+}
+function toggleTheme() {
+    const html = document.documentElement;
+    const icon = document.getElementById('theme-icon');
+    if (html.getAttribute('data-theme') === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        html.setAttribute('data-theme', 'light');
+        icon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+    }
+}
+function toggleMenu() {
+    document.getElementById('mobile-menu').classList.toggle('active');
+}
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ===== VARIABLES =====
+let userLat = null;
+let userLon = null;
+let allHospitals = [];
+let activeFilter = 'all';
+
+// ===== FILTER =====
+function setFilter(btn, filter) {
+    document.querySelectorAll('.hospital-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = filter;
+    if (allHospitals.length > 0) renderHospitals();
+}
+
+// ===== GPS =====
+function useGPS() {
+    const btn = document.querySelector('.hospital-gps-btn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting...';
+    btn.disabled = true;
+
+    if (!navigator.geolocation) {
+        alert('Geolocation not supported by your browser!');
+        btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> My Location';
+        btn.disabled = false;
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            document.getElementById('location-input').value = '';
+            document.getElementById('location-input').placeholder = 'Using your GPS location...';
+            btn.innerHTML = '<i class="fas fa-check"></i> Got it!';
+            btn.style.background = '#028090';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> My Location';
+                btn.style.background = '#06D6A0';
+                btn.disabled = false;
+            }, 2000);
+            fetchHospitals(userLat, userLon);
+        },
+        (err) => {
+            console.log('GPS Error code:', err.code, err.message);
+            btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> My Location';
+            btn.disabled = false;
+
+            let message = 'Could not get your location. Please type your area manually.';
+
+if (err.code === 1) {
+    message = 'Location permission is blocked. Please allow location access from browser site settings, or type your area manually.';
+} else if (err.code === 2) {
+    message = 'Could not detect your location. Please type your area manually.';
+} else if (err.code === 3) {
+    message = 'Location request timed out. Please try again or type your area manually.';
+}
+
+showError(message);
+document.getElementById('location-input').focus();
+
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+// ===== SEARCH BY TEXT =====
+async function searchHospitals() {
+    const location = document.getElementById('location-input').value.trim();
+
+    if (!location && userLat) {
+    fetchHospitals(userLat, userLon);
+    return;
+    }
+
+    if (!location) {
+        alert('Please enter a location or use GPS!');
+        return;
+    }
+
+    showLoading();
+
+    try {
+        const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1&countrycodes=in`,
+            { headers: { 'Accept-Language': 'en', 'User-Agent': 'CareBot-AI/1.0' } }
+        );
+        const geoData = await geoRes.json();
+
+        if (!geoData || geoData.length === 0) {
+            showError('Location not found! Try something like "Rohini Delhi" or "Pitampura Delhi".');
+            return;
+        }
+
+        const searchLat = parseFloat(geoData[0].lat);
+        const searchLon = parseFloat(geoData[0].lon);
+
+        // Use GPS for distance if available, else use search location
+        userLat = userLat || searchLat;
+        userLon = userLon || searchLon;
+
+        fetchHospitals(searchLat, searchLon);
+
+    } catch(err) {
+        console.log('Geocode error:', err);
+        showError('Network error! Please check your internet connection.');
+    }
+}
+
+// ===== FETCH HOSPITALS =====
+async function fetchHospitals(lat, lon) {
+    showLoading();
+
+    const query = `[out:json][timeout:25];(node["amenity"="hospital"](around:10000,${lat},${lon});way["amenity"="hospital"](around:10000,${lat},${lon});node["amenity"="clinic"](around:10000,${lat},${lon});way["amenity"="clinic"](around:10000,${lat},${lon});node["healthcare"](around:10000,${lat},${lon});way["healthcare"](around:10000,${lat},${lon}););out center;`;
+
+    try {
+        const res = await fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            body: query
+        });
+
+        const data = await res.json();
+        console.log('Total found:', data.elements.length);
+
+        const seen = new Set();
+        allHospitals = [];
+
+        for (const el of data.elements) {
+    const tags = el.tags || {};
+
+    let elLat = el.type === 'node' ? el.lat : el.center?.lat;
+    let elLon = el.type === 'node' ? el.lon : el.center?.lon;
+    if (!elLat || !elLon) continue;
+
+    const name = tags.name || tags['name:en'] || tags.operator || 'Hospital/Clinic';
+    const uniqueKey = `${name}-${elLat}-${elLon}`;
+
+    if (seen.has(uniqueKey)) continue;
+    seen.add(uniqueKey);
+
+    const dist = getDistance(lat, lon, elLat, elLon);
+
+    const amenity = tags.amenity || '';
+    const healthcare = tags.healthcare || '';
+
+    let type = 'Hospital';
+    let iconClass = 'govt';
+
+    if (amenity === 'clinic' || healthcare === 'clinic') {
+        type = 'Clinic';
+        iconClass = 'clinic';
+    } else if (tags.operator?.toLowerCase().includes('private')) {
+        type = 'Private';
+        iconClass = 'private';
+    }
+
+    allHospitals.push({
+        name,
+        type,
+        iconClass,
+        dist,
+        address: buildAddress(tags),
+        phone: tags.phone || tags['contact:phone'] || null,
+        emergency: tags.emergency === 'yes',
+        opening: tags.opening_hours || null,
+        elLat,
+        elLon
+    });
+}
+
+
+        console.log('Processed:', allHospitals.length);
+
+        if (allHospitals.length === 0) {
+            // Fallback to AI if Overpass returns nothing
+            await fetchHospitalsAI(lat, lon);
+            return;
+        }
+
+        allHospitals.sort((a, b) => a.dist - b.dist);
+        renderHospitals();
+
+    } catch(err) {
+        console.log('Overpass error:', err);
+        await fetchHospitalsAI(lat, lon);
+    }
+}
+
+// Fallback AI function if Overpass fails
+async function fetchHospitalsAI(lat, lon) {
+    try {
+        const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+            { headers: { 'Accept-Language': 'en', 'User-Agent': 'CareBot-AI/1.0' } }
+        );
+        const geoData = await geoRes.json();
+        const locationName = geoData.display_name || 'Delhi';
+
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: `List 9 real hospitals near ${locationName} India. Return ONLY a valid JSON array, no explanation. Format: [{"name":"hospital name","address":"full address","phone":"phone or null","type":"Government or Private or Clinic","emergency":true or false,"lat":28.1234,"lon":77.1234}]`
+            })
+        });
+
+        const data = await response.json();
+        const jsonMatch = data.reply.match(/\[[\s\S]*\]/);
+        if (!jsonMatch) { showError('Could not find hospitals. Try again!'); return; }
+
+        allHospitals = JSON.parse(jsonMatch[0]).map(h => ({
+            ...h,
+            iconClass: h.type === 'Clinic' ? 'clinic' : h.type === 'Private' ? 'private' : 'govt',
+            elLat: h.lat || lat,
+            elLon: h.lon || lon,
+            dist: h.lat ? getDistance(lat, lon, h.lat, h.lon) : null
+        }));
+
+        allHospitals.sort((a, b) => (a.dist || 999) - (b.dist || 999));
+        renderHospitals();
+
+    } catch(err) {
+        showError('Could not fetch hospitals. Please try again!');
+    }
+}
+// ===== RENDER HOSPITALS =====
+function renderHospitals() {
+    let filtered = [...allHospitals];
+
+    if (activeFilter === 'emergency') {
+        filtered = filtered.filter(h => h.emergency || h.opening === '24/7');
+    } else if (activeFilter === 'nearest') {
+        filtered = filtered.slice(0, 6);
+    } else if (activeFilter === 'clinic') {
+        filtered = filtered.filter(h => h.type === 'Clinic');
+    }
+
+    const top = filtered.slice(0, 12);
+
+    document.getElementById('results-count').textContent = top.length + ' Results';
+    document.getElementById('results-subtitle').textContent = 'Real hospitals found near your location';
+
+    if (top.length === 0) {
+        showError('No hospitals match this filter. Try a different one!');
+        return;
+    }
+
+    document.getElementById('hospital-results-grid').innerHTML = top.map(h => `
+        <div class="hospital-result-card">
+            <div class="hospital-result-top">
+                <div class="hospital-result-icon ${h.iconClass}">
+                    <i class="fas fa-${h.type === 'Clinic' ? 'clinic-medical' : 'hospital'}"></i>
+                </div>
+                <div class="hospital-result-badge">${h.type}</div>
+            </div>
+            <h3>${h.name}</h3>
+            <p class="hospital-location">
+                <i class="fas fa-location-dot"></i> ${h.address}
+            </p>
+            <p class="hospital-distance">
+            <i class="fas fa-route"></i> 
+            ${h.dist && typeof h.dist === 'number' ? '~' + h.dist.toFixed(1) + ' km straight-line' : h.dist || 'Distance not available'}
+            </p>
+            <div class="hospital-tags">
+                ${h.emergency ? '<span>🚨 Emergency</span>' : ''}
+                ${h.opening === '24/7' ? '<span>🕐 24/7</span>' : ''}
+                <span>${h.type}</span>
+            </div>
+            <div class="hospital-actions">
+                ${h.phone
+                    ? `<a href="tel:${h.phone}" class="hospital-btn-primary"><i class="fas fa-phone"></i> Call</a>`
+                    : `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + ' hospital')}" target="_blank" class="hospital-btn-primary"><i class="fas fa-search"></i> Search</a>`
+                }
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${h.elLat},${h.elLon}"
+                target="_blank" class="hospital-btn-outline">
+
+                    <i class="fas fa-directions"></i> Directions
+                </a>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== HELPERS =====
+function buildAddress(tags) {
+    const parts = [];
+    if (tags['addr:housenumber']) parts.push(tags['addr:housenumber']);
+    if (tags['addr:street']) parts.push(tags['addr:street']);
+    if (tags['addr:suburb']) parts.push(tags['addr:suburb']);
+    if (tags['addr:city']) parts.push(tags['addr:city']);
+    if (tags['addr:state']) parts.push(tags['addr:state']);
+    return parts.length ? parts.join(', ') : 'Address not available';
+}
+
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function showLoading() {
+    document.getElementById('hospital-results-grid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:80px 20px;">
+            <div style="width:55px;height:55px;border:5px solid #e0e0e0;border-top-color:var(--primary);
+                border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;"></div>
+            <p style="color:var(--text2);font-size:1.1rem;">Finding real hospitals near you...</p>
+        </div>`;
+}
+
+function showError(msg) {
+    document.getElementById('hospital-results-grid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:80px 20px;">
+            <div style="font-size:3.5rem;margin-bottom:16px;">⚠️</div>
+            <h3 style="color:var(--text);margin-bottom:10px;">Oops!</h3>
+            <p style="color:var(--text2);">${msg}</p>
+        </div>`;
+}
+
+// Enter key support
+document.getElementById('location-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchHospitals();
+});
+</script>
+
+</body>
+</html>

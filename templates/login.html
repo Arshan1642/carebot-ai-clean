@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — CareBot AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="auth-page">
+      <div class="auth-left">
+        <div class="auth-left-content">
+          <div class="auth-brand">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <span>CareBot<span class="highlight">AI</span></span>
+          </div>
+          <h2>Your Smart Healthcare Assistant</h2>
+          <p>
+            Login to access your personal health dashboard, chat history, and
+            appointments.
+          </p>
+          <div class="auth-features">
+            <div class="auth-feature">
+              <i class="fas fa-check-circle"></i> Save chat history
+            </div>
+            <div class="auth-feature">
+              <i class="fas fa-check-circle"></i> Track appointments
+            </div>
+            <div class="auth-feature">
+              <i class="fas fa-check-circle"></i> Personal dashboard
+            </div>
+            <div class="auth-feature">
+              <i class="fas fa-check-circle"></i> 24/7 AI support
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-right">
+        <div class="auth-form-card">
+          <div class="auth-form-header">
+            <h2>Welcome Back 👋</h2>
+            <p>Login to your CareBot AI account</p>
+          </div>
+
+          {% if error %}
+          <div class="auth-error">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
+          </div>
+          {% endif %}
+
+          <form method="POST" action="/login">
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> Password</label>
+              <div class="password-wrap">
+                <input
+                  type="password"
+                  name="password"
+                  id="login_password"
+                  placeholder="Enter your password"
+                  required
+                />
+                <i
+                  class="fas fa-eye toggle-eye"
+                  onclick="togglePassword('login_password', this)"
+                ></i>
+              </div>
+            </div>
+            <button type="submit" class="auth-submit-btn">
+              Login <i class="fas fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <p class="auth-switch">
+            Don't have an account? <a href="/signup">Sign Up Free</a>
+          </p>
+          <a href="/" class="back-home"
+            ><i class="fas fa-arrow-left"></i> Back to Home</a
+          >
+        </div>
+      </div>
+    </div>
+    <script>
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+
+      function togglePassword(id, icon) {
+        const input = document.getElementById(id);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+      }
+    </script>
+  </body>
+</html>

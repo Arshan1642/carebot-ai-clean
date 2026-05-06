@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment — CareBot AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+    <a href="/" class="nav-logo" style="text-decoration:none; color:var(--text);">
+    <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+    <span>CareBot<span class="highlight">AI</span></span>
+    </a>
+    <div class="nav-links">
+    <a href="/#home" class="nav-link">Home</a>
+    <a href="/#features" class="nav-link">Features</a>
+    <a href="/#symptom-checker" class="nav-link">Symptom Check</a>
+    <a href="/#hospitals" class="nav-link">Hospitals</a>
+    <a href="/#doctors" class="nav-link">Doctors</a>
+    <a href="/appointments" class="nav-link active">Book Appointment</a>
+    <a href="/carebot" class="nav-link">Chat</a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+        {% if current_user.is_authenticated %}
+        <a href="/logout" class="btn-signup">Logout <i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+        <a href="/login" class="btn-login">Login</a>
+        <a href="/signup" class="btn-signup">Sign Up <i class="fas fa-arrow-right"></i></a>
+        {% endif %}
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobile-menu">
+    <a href="/" onclick="toggleMenu()"><i class="fas fa-home"></i> Home</a>
+    <a href="/carebot" onclick="toggleMenu()"><i class="fas fa-comments"></i> AI Chat</a>
+    <a href="/#symptom-checker" onclick="toggleMenu()"><i class="fas fa-stethoscope"></i> Symptom Check</a>
+    <a href="/hospitals" onclick="toggleMenu()"><i class="fas fa-hospital"></i> Hospitals</a>
+    <a href="/#doctors" onclick="toggleMenu()"><i class="fas fa-user-md"></i> Doctors</a>
+    <a href="/appointments" onclick="toggleMenu()"><i class="fas fa-calendar-check"></i> Appointments</a>
+    <div class="mobile-auth">
+        {% if current_user.is_authenticated %}
+        <a href="/dashboard" class="btn-login" onclick="toggleMenu()">Dashboard</a>
+        <a href="/logout" class="btn-signup" onclick="toggleMenu()">Logout</a>
+        {% else %}
+        <a href="/login" class="btn-login" onclick="toggleMenu()">Login</a>
+        <a href="/signup" class="btn-signup" onclick="toggleMenu()">Sign Up</a>
+        {% endif %}
+    </div>
+</div>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-header-content">
+        <div class="page-tag">Easy Booking</div>
+        <h1>Book an <span class="highlight">Appointment</span></h1>
+        <p>Schedule your appointment with a specialist in minutes</p>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="apt-page">
+      <!-- FORM -->
+      <div class="apt-form-card">
+        <h3><i class="fas fa-calendar-check"></i> Fill Appointment Details</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input
+              type="text"
+              id="apt-name"
+              placeholder="Enter your full name"
+            />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input
+              type="tel"
+              id="apt-phone"
+              placeholder="Enter your phone number"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email (Optional)</label>
+            <input type="email" id="apt-email" placeholder="Enter your email" />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-birthday-cake"></i> Age</label>
+            <input type="number" id="apt-age" placeholder="Enter your age" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user-md"></i> Select Specialty</label>
+            <select id="apt-specialty">
+              <option value="">Choose specialty...</option>
+              <option>General Physician</option>
+              <option>Cardiologist</option>
+              <option>Neurologist</option>
+              <option>Pediatrician</option>
+              <option>Orthopedic</option>
+              <option>Dermatologist</option>
+              <option>Gynecologist</option>
+              <option>ENT Specialist</option>
+              <option>Ophthalmologist</option>
+              <option>Psychiatrist</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-venus-mars"></i> Gender</label>
+            <select id="apt-gender">
+              <option value="">Select gender...</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-calendar"></i> Preferred Date</label>
+            <input type="date" id="apt-date" />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-clock"></i> Preferred Time</label>
+            <select id="apt-time">
+              <option value="">Choose time...</option>
+              <option>9:00 AM</option>
+              <option>10:00 AM</option>
+              <option>11:00 AM</option>
+              <option>12:00 PM</option>
+              <option>2:00 PM</option>
+              <option>3:00 PM</option>
+              <option>4:00 PM</option>
+              <option>5:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label
+            ><i class="fas fa-comment-medical"></i> Describe Your Issue</label
+          >
+          <textarea
+            id="apt-issue"
+            placeholder="Briefly describe your health concern..."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <button class="book-btn" onclick="bookAppointment()">
+          <i class="fas fa-calendar-check"></i> Confirm Appointment
+        </button>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="apt-right">
+        <!-- CONFIRMATION BOX -->
+        <div
+          class="apt-confirmation"
+          id="apt-confirmation"
+          style="display: none"
+        >
+          <div class="confirm-icon"><i class="fas fa-check-circle"></i></div>
+          <h3>Appointment Confirmed! 🎉</h3>
+          <div id="confirm-details"></div>
+          <button
+            onclick="resetForm()"
+            class="book-btn"
+            style="margin-top: 16px"
+          >
+            <i class="fas fa-plus"></i> Book Another
+          </button>
+        </div>
+
+        <!-- INFO CARDS -->
+        <div id="info-cards">
+          <div class="apt-info-card">
+            <div
+              class="apt-info-icon"
+              style="background: rgba(0, 150, 199, 0.1); color: var(--primary)"
+            >
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <h4>Quick Booking</h4>
+              <p>Book your appointment in under 2 minutes</p>
+            </div>
+          </div>
+          <div class="apt-info-card">
+            <div
+              class="apt-info-icon"
+              style="background: rgba(6, 214, 160, 0.1); color: var(--accent)"
+            >
+              <i class="fas fa-bell"></i>
+            </div>
+            <div>
+              <h4>Instant Confirmation</h4>
+              <p>Get confirmed instantly after booking</p>
+            </div>
+          </div>
+          <div class="apt-info-card">
+            <div
+              class="apt-info-icon"
+              style="background: rgba(247, 127, 0, 0.1); color: var(--warning)"
+            >
+              <i class="fas fa-user-md"></i>
+            </div>
+            <div>
+              <h4>Expert Doctors</h4>
+              <p>All doctors are verified professionals</p>
+            </div>
+          </div>
+          <div class="apt-info-card">
+            <div
+              class="apt-info-icon"
+              style="background: rgba(114, 9, 183, 0.1); color: #7209b7"
+            >
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div>
+              <h4>100% Secure</h4>
+              <p>Your personal data is safe with us</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      const themeIcon = document.getElementById("theme-icon");
+      if (themeIcon) {
+        themeIcon.classList.remove("fa-moon", "fa-sun");
+        themeIcon.classList.add(savedTheme === "dark" ? "fa-sun" : "fa-moon");
+      }
+
+      function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById("theme-icon");
+        if (html.getAttribute("data-theme") === "light") {
+          html.setAttribute("data-theme", "dark");
+          icon.classList.replace("fa-moon", "fa-sun");
+          localStorage.setItem("theme", "dark");
+        } else {
+          html.setAttribute("data-theme", "light");
+          icon.classList.replace("fa-sun", "fa-moon");
+          localStorage.setItem("theme", "light");
+        }
+      }
+
+      function toggleMenu() {
+        document.getElementById("mobile-menu").classList.toggle("active");
+      }
+      window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+      async function bookAppointment() {
+        const name = document.getElementById("apt-name").value.trim();
+        const phone = document.getElementById("apt-phone").value.trim();
+        const specialty = document.getElementById("apt-specialty").value;
+        const date = document.getElementById("apt-date").value;
+        const time = document.getElementById("apt-time").value;
+        const issue = document.getElementById("apt-issue").value;
+        const email = document.getElementById("apt-email").value;
+        const age = document.getElementById("apt-age").value;
+        const gender = document.getElementById("apt-gender").value;
+
+        if (!name || !phone || !specialty || !date || !time) {
+          alert("Please fill in all required fields!");
+          return;
+        }
+
+        const response = await fetch("/book-appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, phone, specialty, date, time, issue }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById("info-cards").style.display = "none";
+          const confirmation = document.getElementById("apt-confirmation");
+          confirmation.style.display = "block";
+          document.getElementById("confirm-details").innerHTML = `
+                <div class="confirm-row"><i class="fas fa-user"></i> <span>${name}</span></div>
+                <div class="confirm-row"><i class="fas fa-user-md"></i> <span>${specialty}</span></div>
+                <div class="confirm-row"><i class="fas fa-calendar"></i> <span>${new Date(date).toDateString()}</span></div>
+                <div class="confirm-row"><i class="fas fa-clock"></i> <span>${time}</span></div>
+                <div class="confirm-row"><i class="fas fa-phone"></i> <span>${phone}</span></div>
+            `;
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("apt-name").value = "";
+        document.getElementById("apt-phone").value = "";
+        document.getElementById("apt-specialty").value = "";
+        document.getElementById("apt-date").value = "";
+        document.getElementById("apt-time").value = "";
+        document.getElementById("apt-issue").value = "";
+        document.getElementById("apt-confirmation").style.display = "none";
+        document.getElementById("info-cards").style.display = "flex";
+      }
+
+      document.getElementById("apt-date").min = new Date()
+        .toISOString()
+        .split("T")[0];
+    </script>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — CareBot AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-logo">
+        <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+        <span>CareBot<span class="highlight">AI</span></span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+        <a href="/" class="btn-login">Home</a>
+        <a href="/logout" class="btn-signup"
+          >Logout <i class="fas fa-sign-out-alt"></i
+        ></a>
+      </div>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard-page">
+      <!-- WELCOME BANNER -->
+      <div class="dashboard-banner">
+        <div class="banner-content">
+          <h1>
+            Welcome back, <span class="highlight">{{ user.name }}</span>! 👋
+          </h1>
+          <p>Here's your personal health dashboard</p>
+        </div>
+        <div class="banner-stats">
+          <div class="banner-stat">
+            <span class="banner-stat-number">{{ chats|length }}</span>
+            <span class="banner-stat-label">Chats</span>
+          </div>
+          <div class="banner-stat">
+            <span class="banner-stat-number">{{ appointments|length }}</span>
+            <span class="banner-stat-label">Appointments</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- QUICK ACTIONS -->
+        <div class="dash-card quick-actions">
+          <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+          <div class="actions-grid">
+            <a href="/#chat" class="action-btn">
+              <i class="fas fa-comments"></i>
+              <span>New Chat</span>
+            </a>
+            <a href="/#symptom-checker" class="action-btn">
+              <i class="fas fa-stethoscope"></i>
+              <span>Check Symptoms</span>
+            </a>
+            <a href="/#hospitals" class="action-btn">
+              <i class="fas fa-hospital"></i>
+              <span>Find Hospital</span>
+            </a>
+            <a href="/#appointments" class="action-btn">
+              <i class="fas fa-calendar-check"></i>
+              <span>Book Appointment</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CHAT HISTORY -->
+        <div class="dash-card chat-history-card">
+          <h3><i class="fas fa-history"></i> Recent Chats</h3>
+          {% if chats %}
+          <div class="history-list">
+            {% for chat in chats %}
+            <div class="history-item">
+              <div class="history-question">
+                <i class="fas fa-user"></i>
+                <p>
+                  {{ chat.message[:80] }}{% if chat.message|length > 80 %}...{%
+                  endif %}
+                </p>
+              </div>
+              <div class="history-answer">
+                <i class="fas fa-robot"></i>
+                <p>
+                  {{ chat.response[:100] }}{% if chat.response|length > 100
+                  %}...{% endif %}
+                </p>
+              </div>
+              <span class="history-time"
+                ><i class="fas fa-clock"></i> {{ chat.timestamp.strftime('%d %b,
+                %I:%M %p') }}</span
+              >
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <i class="fas fa-comments"></i>
+            <p>No chats yet! Start a conversation with CareBot AI</p>
+            <a href="/#chat" class="btn-primary">Start Chatting</a>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- APPOINTMENTS -->
+        <div class="dash-card appointments-card">
+          <h3><i class="fas fa-calendar-check"></i> My Appointments</h3>
+          {% if appointments %}
+          <div class="appointments-list">
+            {% for apt in appointments %}
+            <div class="apt-item">
+              <div class="apt-icon"><i class="fas fa-user-md"></i></div>
+              <div class="apt-info">
+                <h4>{{ apt.specialty }}</h4>
+                <p>
+                  <i class="fas fa-calendar"></i> {{ apt.date }} at {{ apt.time
+                  }}
+                </p>
+                <p><i class="fas fa-phone"></i> {{ apt.phone }}</p>
+              </div>
+              <span class="apt-status confirmed">Confirmed</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <i class="fas fa-calendar"></i>
+            <p>No appointments yet!</p>
+            <a href="/#appointments" class="btn-primary">Book Now</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      const themeIcon = document.getElementById("theme-icon");
+      if (themeIcon) {
+        themeIcon.classList.remove("fa-moon", "fa-sun");
+        themeIcon.classList.add(savedTheme === "dark" ? "fa-sun" : "fa-moon");
+      }
+
+      function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById("theme-icon");
+        if (html.getAttribute("data-theme") === "light") {
+          html.setAttribute("data-theme", "dark");
+          icon.classList.replace("fa-moon", "fa-sun");
+          localStorage.setItem("theme", "dark");
+        } else {
+          html.setAttribute("data-theme", "light");
+          icon.classList.replace("fa-sun", "fa-moon");
+          localStorage.setItem("theme", "light");
+        }
+      }
+    </script>
+  </body>
+</html>
