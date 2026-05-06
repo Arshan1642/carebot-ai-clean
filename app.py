@@ -8,7 +8,7 @@ from datetime import datetime
 import requests
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'carebotai-secret-key-2026'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "carebotai-secret-key-2026")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///carebot.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -108,6 +108,9 @@ def dashboard():
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message")
+
+    if not GROQ_API_KEY:
+        return jsonify({"reply": "Groq API key is missing. Please set GROQ_API_KEY in Render environment variables."}), 500
 
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
